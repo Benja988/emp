@@ -10,6 +10,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await dbConnect();
     const { name, email, password, role } = req.body;
 
+    // Validate role
+    const validRoles = ["customer", "vendor", "admin"];
+    if (!validRoles.includes(role)) return res.status(400).json({ error: "Invalid role" });
+
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: "User already exists" });
 
@@ -21,3 +25,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
